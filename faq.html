@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="generator" content="Jekyll v3.8.6">
+    <title>ssams · Self Service Asset Management System</title>
+
+    <!-- Bootstrap core CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<meta name="theme-color" content="#563d7c">
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .container {
+        max-width: 960px;
+      }
+
+      .lh-condensed {
+        line-height: 1.25;
+      }
+    </style>
+    <script>
+        var fs = require('fs');
+        var json2csv = require('json2csv');
+        var newLine= "\r\n";
+
+        var fields = ['Total', 'Name'];
+
+        var appendThis = [
+            {
+                'Total': '100',
+                'Name': 'myName1'
+            },
+            {
+                'Total': '200',
+                'Name': 'myName2'
+            }
+        ];
+
+        var toCsv = {
+            data: appendThis,
+            fields: fields,
+            hasCSVColumnTitle: false
+        };
+
+        fs.stat('file.csv', function (err, stat) {
+            if (err == null) {
+                console.log('File exists');
+
+                //write the actual data and end with newline
+                var csv = json2csv(toCsv) + newLine;
+
+                fs.appendFile('file.csv', csv, function (err) {
+                    if (err) throw err;
+                    console.log('The "data to append" was appended to file!');
+                });
+            }
+            else {
+                //write the headers and newline
+                console.log('New file, just writing headers');
+                fields= (fields + newLine);
+
+                fs.writeFile('file.csv', fields, function (err) {
+                    if (err) throw err;
+                    console.log('file saved');
+                });
+            }
+        });
+    </script>
+  </head>
+  <body class="bg-light">
+    <div class="container">
+  <div class="py-5 text-center">
+    <h2>faq</h2>
+    <p class="lead">Questions and answers to get you started.</p>
+  </div>
+
+    <div class="col-md-8 order-md-1">
+        <h2>What is the average air-speed velocity of an unladden swallow?</h2>
+        <p>We haven't completed a detailed analysis of this yet, but it's in the pipeline.</p>
+    </div>
+  </div>
+
+  <footer class="my-5 pt-5 text-muted text-center text-small">
+    <p class="mb-1">&copy; 2020 </p>
+    <ul class="list-inline">
+      <li class="list-inline-item"><a href="index.html">home</a></li>
+      <li class="list-inline-item"><a href="faq.html">faq</a></li>
+      <li class="list-inline-item"><a href="dat.csv">file</a></li>
+    </ul>
+  </footer>
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="form-validation.js"></script></body>
+</html>

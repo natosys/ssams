@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="generator" content="Jekyll v3.8.6">
+    <title>ssams · Self Service Asset Management System</title>
+
+    <!-- Bootstrap core CSS -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+<meta name="theme-color" content="#563d7c">
+
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .container {
+        max-width: 960px;
+      }
+
+      .lh-condensed {
+        line-height: 1.25;
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container">
+  <div class="py-5 text-center">
+    <h2>update form</h2>
+    <p class="lead">Fill out the details below to update the asset holdings register. Data is migrated at least weekly, please allow at least 7 days for updates to appear in the database.</p>
+  </div>
+
+    <div class="col-md-12 order-md-1">
+      <h4 class="mb-3">Update details</h4>
+      <form class="needs-validation was-validated" novalidate>
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <label for="datetime">datetime</label>
+            <input type="text" class="form-control" id="datetime" placeholder="" value="" required readonly>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="lastName">pmkeys</label>
+            <input type="text" class="form-control inputs" id="pmkeys" placeholder="" value="" type="number" maxlength="7" required>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="location">location</label>
+            <input type="text" class="form-control inputs" id="location" placeholder="" value="" maxlength="7" required>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="asset">asset</label>
+            <input type="text" class="form-control inputs" id="asset" placeholder="" value="" maxlength="7" required>
+          </div>
+        </div>
+        <hr class="mb-4">
+        <button class="btn btn-primary btn-sm" type="submit" id="submit">add</button>
+        <button class="btn btn-primary btn-sm" type="save" id="save">save</button>
+      </form>
+    </div>
+
+    <hr class="mb-4">
+    <p id="showData"></p>
+    </div>
+  </div>
+
+
+  <footer class="my-5 pt-5 text-muted text-center text-small">
+    <p class="mb-1">&copy; 2020 </p>
+    <ul class="list-inline">
+      <li class="list-inline-item"><a href="index.html">home</a></li>
+      <li class="list-inline-item"><a href="faq.html">faq</a></li>
+    </ul>
+  </footer>
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="form-validation.js"></script></body>
+            <script>
+
+        var data = [];
+        var headers = ["datetime", "pmkeys", "location", "asset"];
+
+        function timeNow() {
+            // Get an instance of time
+            var d = new Date();
+            // Update the datetime field with the time as unix time string
+            $("#datetime").val(d.getTime());
+        }
+
+        function buildTable() {
+            // Set col to the specified headers
+            var col = headers;
+
+            // Destroy any existing table if it exists
+            if ($("#data").length) {
+                $("#data").remove();
+            }
+            // Create a new data table
+            $("#showData").append('<table class="table" id="data"></table>');
+            table = $("#data")[0];
+
+            // Create the table header based on the headers array
+            var tr = table.insertRow(-1);
+            for (var i = 0; i < col.length; i++) {
+                var th = document.createElement("th");
+                th.innerHTML = col[i];
+                tr.appendChild(th);
+            }
+
+            // Add the data to the body of the table
+            for (var i = 0; i < data.length; i++) {
+
+                tr = table.insertRow(-1);
+
+                for (var j = 0; j < col.length; j++) {
+                    var tabCell = tr.insertCell(-1);
+                    tabCell.innerHTML = data[i][j];
+                }
+            }
+        }
+
+        $(function() {
+            // Update the datetime field every second
+            setInterval(timeNow, 1000);
+
+            // Set cursor to appear in the pmkeys field
+            $("#pmkeys").focus();
+
+            // Get the number of input fields to allow auto-focus actions
+            var input_fields = $(".inputs").map(function() {
+                return this.id;
+            }).get();
+
+            // Check if the user has filled the field and move focus to next field or submit button
+            $(".inputs").keyup(function () {
+                if (this.value.length == this.maxLength) {
+                    i = input_fields.indexOf(this.id)
+                    console.log("i: " + i);
+                    l = input_fields.length;
+                    console.log("l: " + l);
+                    if (i+1 < l) {
+                        $("#"+input_fields[i+1]).focus();
+                    }
+                    else {
+                        $("#submit").focus();
+                    }
+                }
+            });
+
+            $("#save").click(function() {
+
+                // Build csv string for writing to file
+                let csvContent = "data:text/csv;charset=utf-8," 
+                    + data.map(e => e.join(",")).join("\n");
+
+                // Setup a hidden <a> tag encoded with csv string
+                var encodedUri = encodeURI(csvContent);
+                var link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+
+                // Get unix timestring for use as filename
+                var d = new Date();
+                var name = d.getTime();
+
+                // Setup link
+                link.setAttribute("download", name + ".csv");
+                document.body.appendChild(link); // Required for FF
+
+                // Download csv string
+                link.click();
+
+                // Clear data array now that it is saved to a file
+                data = [];
+
+                // Build empty table
+                buildTable();
+            });
+
+            $("#submit").click(function() {
+                // Build row array based on input fields
+                row = [
+                    $("#datetime").val(),
+                    $("#pmkeys").val(),
+                    $("#location").val(),
+                    $("#asset").val()
+                ];
+                // Push row array into data array
+                data.push(row);
+
+                // Clear fields and focus on first input field
+                $("#pmkeys").val("").focus();
+                $("#location").val("");
+                $("#asset").val("");
+                // Build empty table
+                buildTable();
+            });
+        });
+
+    </script>
+</html>
